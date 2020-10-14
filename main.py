@@ -1,90 +1,64 @@
 import tkinter
-import turtle
-import math
+import Drawer
 
 class Main:
     def __init__(self):
-
-
+        #Variables
         #Root
         window = tkinter.Tk() # Create a window
         window.title("Lissajou Number") # Set a title
         #Containers
-        drawFrame = tkinter.Frame(bg='blue',width=100,height=100,pady=3);
+        drawFrame = tkinter.Frame(bg='blue',width=620,height=620,pady=3);
         controlFrame = tkinter.Frame(bg='red',width=100,height=100,pady=3);
         #layout of main Containers
         window.grid_rowconfigure(1,weight=1)
         window.grid_columnconfigure(0,weight=1)
-
         drawFrame.grid(column=0,row=0,sticky="ew")
         controlFrame.grid(column=1,row=0,sticky="sewn")
         #widgets and layout
-        startButton = tkinter.Button(master=controlFrame,text="grow Tree")
-        startButton.grid(column=0)
-
-        canvas = tkinter.Canvas(master=drawFrame,width =60, height = 60,bg="white")
+            #canvas to show on
+        canvas = tkinter.Canvas(master=drawFrame,bg="white",width=600,height=600)
         canvas.grid(column=0)
-
-
-        #source https://stackoverflow.com/questions/34276663/tkinter-gui-layout-using-frames-and-grid
-        #frame1 = tkinter.Frame(window) # Create and add a frame to window for the Scales
-        '''
-        pen = turtle.RawTurtle(canvas)
-        pen.speed(10)
-        pen.color('white','white')
-        a,b,c = 1,1,1
-        d,e,f = 1,2,1
-        for i in (x * 0.2 for x in range(0, 1000)):
-            y = a*math.cos(b*i)
-            x = c*math.sin(d*i)
-            print(" {} | {}".format(x,y))
-            pen.goto(x*200,y*200)
-            pen.color('black','black')
-        '''
-        #Scales
-        """
-        self.angleScale = Scale(frame1, from_=0, to=180, orient=VERTICAL,labe="angel between branches",resolution=5)
-        self.angleScale.pack(side = LEFT)
-        self.angleScale.set(30)
-        #sizeFactor
-        self.sFScale = Scale(frame1, from_=0.5, to=0.9, orient=VERTICAL,labe="sizeFac",resolution=0.05)
-        self.sFScale.pack(side = LEFT)
-        self.sFScale.set(0.75)
-        #Startsize
-        self.sSizeScale = Scale(frame1, from_=0, to=130, orient=VERTICAL,labe="startSize",resolution=5)
-        self.sSizeScale.pack(side = LEFT)
-        self.sSizeScale.set(130)
-        #Number of Branches
-        self.numOfBranches = Scale(frame1, from_=1, to=5, orient=VERTICAL,labe="Number of Branches",resolution=1)
-        self.numOfBranches.pack(side = LEFT)
-        self.numOfBranches.set(4)
-        """
-
-
-
+            #Label """a*sin(b*t+c) = d*cos(e*t+f)"""
+        label = tkinter.Label(master=controlFrame,text="a*sin(b*t+c) = d*cos(e*t+f)")
+        label.grid(column=0)
+        """    #startButton
+        startButton = tkinter.Button(master=controlFrame,text="grow Tree",command= lambda: self.drawLissajou(canvas,label,scales))
+        startButton.grid(column=0)"""
+            #Scale from a-f
+        scales = [None]*10
+        scaleNames = ["a","b","c","d","e","f"]
+        for i in range(1,7):
+            print(i)
+            #Scale
+            scale = tkinter.Scale(master=controlFrame, from_=0, to=3,orient=tkinter.HORIZONTAL,label=scaleNames[i-1],resolution=0.1,activebackground='blue' )#highlightcolor='red',highlightbackground='blue',relief=tkinter.FLAT,),command= lambda: print("test"))
+            scale.bind("<ButtonRelease-1>", lambda event: self.drawLissajou(canvas,label,scales))
+            scale.grid(column=0)
+            scale.set(i*0.3)
+            scales[i-1]=scale
 
         window.mainloop() # Create an event loop*
-    '''
-    def drawLine(self,breite, x1,y1, x2,y2):
-        self.canvas.create_line(x1,y1, x2,y2, tags = "line",width=breite)
 
-    def display(self):
-        self.canvas.delete("line")
-        self.bFac = 1.8/self.numOfBranches.get()
-        breite =self.sSizeScale.get()/6
-        return self.paintBranch(breite,self.width/2, self.height, self.sSizeScale.get(), math.pi/2,1)
+    def hello(self):
+        print("hello")
 
-    def paintBranch(self,breite, x1, y1, length, angle,counter):
-        if length >= 1 and counter < 15-(self.numOfBranches.get()*1.5) :
-            x2 = x1 + int(math.cos(angle) * length)
-            y2 = y1 - int(math.sin(angle) * length)
-            breite2 = breite*self.bFac
-            #linkester Ast = abstand zwischen Branches*(anzahl Branches -1)/2
-            leftestBranch = angle + self.angleScale.get()*self.degreeToRadiant*(self.numOfBranches.get()-1)/2
-            # Draw the line
-            self.drawLine(breite,x1,y1, x2,y2)
-            for x in range(1, self.numOfBranches.get()+1):
-                self.paintBranch(breite2, x2, y2, length * self.sFScale.get(), leftestBranch,counter+1)
-                leftestBranch = leftestBranch - self.angleScale.get()*self.degreeToRadiant
-    '''
+    def labelRefresh(self,label,scales):
+        print("label labelRefresh")
+        label['text'] = "{}*sin({}*t+{}) = {}*cos({}*t+{})".format(scales[0],scales[1],scales[2],scales[3],scales[4],scales[5])
+
+    def drawLissajou(self,canvas,label,scales):
+        #stop the Draw
+        Drawer.Draw.drawNr += 1
+        #getting Values from Scales
+        sValues =[None]*6
+        for i in range(0,6):
+            sValues[i] = scales[i].get()
+        #refresh the lable
+        self.labelRefresh(label,sValues)
+        #start drawing
+        drawer = Drawer.Draw(canvas,label,sValues)
+
 Main()
+
+
+#source https://stackoverflow.com/questions/34276663/tkinter-gui-layout-using-frames-and-grid
