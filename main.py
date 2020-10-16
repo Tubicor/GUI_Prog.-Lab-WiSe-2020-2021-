@@ -24,7 +24,7 @@ class Main:
         scaleColors = ['red','orange','yellow','green','cyan','blue']
         #widgets and layout
             #canvas to show on
-        canvas = tkinter.Canvas(master=drawFrame,bg="white",width=600,height=600)
+        canvas = tkinter.Canvas(master=drawFrame,bg="white",width=650,height=650)
         canvas.grid(column=0)
             #Label for equation
         labels = [None]*6
