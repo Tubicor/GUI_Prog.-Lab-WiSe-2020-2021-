@@ -17,8 +17,6 @@ class Draw:
         smalT = scales[4]
         if scales[1]>scales[4]:
             smalT=scales[1]
-        print("test")
-        print(0.1/smalT)
         for i in (x * 0.13/smalT for x in range(0, 500*(int(smalT)+1))):
             y = -scales[0]*math.sin(scales[1]*i+scales[2])
             x = scales[3]*math.cos(scales[4]*i+scales[5])
