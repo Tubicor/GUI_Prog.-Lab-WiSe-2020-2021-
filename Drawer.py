@@ -19,8 +19,8 @@ class Draw:
             x = scales[3]*math.cos(scales[4]*i+scales[5])
             #print(" {} | {}".format(x,y))
             if self.nr != Draw.drawNr:
-                print("break")
+                #print("break")
                 break
             pen.goto(x*100,y*100)
             pen.color('black','black')
-        print("end draw")
+        #print("end draw")

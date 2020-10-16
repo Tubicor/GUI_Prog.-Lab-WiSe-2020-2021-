@@ -49,7 +49,6 @@ class Main:
         scales = [None]*10
 
         for i in range(1,7):
-            print(i)
             #lable
 
             labelVar = tkinter.Label(master=controlFrame,text=scaleNames[i-1],fg=scaleColors[i-1],bd=5,bg='black',font=("Arial", 44))
@@ -67,7 +66,6 @@ class Main:
         print("hello")
 
     def labelRefresh(self,labels,scales):
-        print("label labelRefresh")
         for i in range(0,6):
             labels[i]['text'] = scales[i]
         #label['text'] = "{}*sin({}*t+{}) = {}*cos({}*t+{})".format(scales[0],scales[1],scales[2],scales[3],scales[4],scales[5])
@@ -83,8 +81,5 @@ class Main:
         self.labelRefresh(labels,sValues)
         #start drawing
         drawer = Drawer.Draw(canvas,sValues)
-
-Main()
-
 
 #source https://stackoverflow.com/questions/34276663/tkinter-gui-layout-using-frames-and-grid
