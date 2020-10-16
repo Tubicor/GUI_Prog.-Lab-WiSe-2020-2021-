@@ -4,7 +4,7 @@ import tkinter
 
 class Draw:
     drawNr = 0
-    def __init__(self,canvas,label,scales):
+    def __init__(self,canvas,scales):
         #Variables
         self.nr = Draw.drawNr
         #Init turtle
