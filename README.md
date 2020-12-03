@@ -2,7 +2,6 @@
 Projects from GUI Programming Lab (5th Semester Lodz TUL) <br>
 <br>
 The Projects are found in the folders named after their tasks.<br>
-Just start the setup.py file nothing more is needed (yet..)<br>
 <br>
 <br>
 <br>
