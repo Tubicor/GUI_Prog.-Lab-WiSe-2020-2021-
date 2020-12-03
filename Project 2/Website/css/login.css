@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+
+body {
+    margin: 0;
+    font-family: 'Montserrat',sans-serif;
+    text-align: center;
+}
+.logo {
+    width: 12rem;
+}
+.toplogo h1 {
+    margin-bottom: -0.5em;
+}
+.toplogo{
+    margin: 3em;
+}
+
+.fields{
+    display: block;
+    margin-left:1.5rem;
+}
+.fields input {
+    position: relative;
+    border: 0px;
+    background-color: rgba(77,135,202,0.2);
+    padding: 1rem;
+    padding-left: 3.5rem;
+    margin-left: -1.5rem;
+    border-radius: 5px;
+    z-index: 1;
+    font-size: 25px;    
+    margin-bottom: 0.5rem;
+}
+.fields img{
+    margin-right: -1.5rem;
+    z-index: 2;
+}
+.submitButton input{
+    border: 0px;
+    background-color: #4d87ca;
+    border-radius: 5px;
+    font-size: 25px;
+    color: #fff;
+    padding: 0.2rem 7rem 
+}
+.submitButton input:hover{
+    cursor: pointer;
+}
+.loginData img{
+    margin-left: -4em;
+}
+.forgotPasswort{
+    margin-top: 0.5em;
+}
+.forgotPasswort a{
+    margin-top: 1.5rem;
+    text-decoration: none;
+    color:  rgba(77,135,202,0.7)
+}
+footer{
+    margin-top: 4em;
+}
+footer a{
+    margin: -0.5em 0;
+    display: block;
+    text-decoration: none;
+    color:#4d87ca;
+}

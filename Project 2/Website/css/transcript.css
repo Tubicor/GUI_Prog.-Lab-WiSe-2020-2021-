@@ -1,0 +1,33 @@
+.grades{    
+    text-align: center;
+    margin: 1em;
+    padding: .1em 0 0 0 ;
+    background-color: rgba(0, 0, 0, 0.295)
+}
+.grades table{
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.grades tr{
+    background-color: white;
+}
+.grades th{
+    font-weight: normal;
+}
+.header th{
+    background-color: rgba(0, 0, 0, 0.295)
+}
+.table_header th{
+    font-weight: 600; 
+}
+.passed{
+    background-color: rgba(17, 219, 17, 0.5);
+}
+.failed{
+    background-color: rgba(255, 0, 0, 0.5);
+}
+.awaiting{
+    background-color: rgba(255, 255, 0, 0.3);
+}

@@ -1,0 +1,97 @@
+.dates{
+    margin: 1em;
+    display: block;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.11);
+    border-radius: .3em;
+    padding: 0 3em 3em 3em;
+}
+.dates table{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tables{
+    padding: 2em;
+    background-color: white;
+    border-radius: .3em;
+}
+.tables tr{
+    background-color: white;
+    
+}
+.tables th{   
+    padding: 0 .5em;
+    font-weight: normal;    
+    font-size: 1.2em;
+}
+.tables table{
+    padding: .1em;
+    border-radius: .2em;
+    background-color: black;
+}
+
+.semester{
+    padding-bottom: 2em;
+}
+.first th{      
+    background-color: rgba(1, 91, 194, 0.118);
+}
+.table_header th{
+    font-weight: bold;
+    background-color: rgba(1, 91, 194, 0.118);
+}
+.currentSemester{
+    background-color: rgba(77,135,202,0.2);
+}
+
+
+.dropbtn {
+    margin-top: .5em;
+    padding: .3em;
+    background-color: rgba(77,135,202,0.2);
+    color: #000;
+    margin-bottom: .5em;
+    font-size: 2em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    border-width: 3px;
+    border-color: rgba(77,135,202,0.9);
+    border-style: solid;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+    color: black;    
+    font-size: 2em;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #ddd;}
+  
+  /* Show the dropdown menu on hover */
+  /*could change color for hovering over dropdown*/
+  .dropdown:hover .dropdown-content {display: block;}
+  
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+  .dropdown:hover .dropbtn {background-color: rgba(77,135,202,0.9);} 

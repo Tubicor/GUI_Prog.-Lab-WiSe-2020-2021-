@@ -1,0 +1,57 @@
+.studyplan{
+    margin: 1em 2em;
+    display: grid;
+    grid-gap: 1em;
+    grid-template-rows:
+    [tracks] auto
+    [s6] auto
+    [s5] auto
+    [s4] auto
+    [s3] auto
+    [s2] auto
+    [s1] auto;
+    /* Note 1:
+    Use 24hr time for gridline names for simplicity
+    
+    Note 2: Use "auto" instead of "1fr" for a more compact schedule where height of a slot is not proportional to the session length. Implementing a "compact" shortcode attribute might make sense for this!
+    Try 0.5fr for more compact equal rows. I don't quite understand how that works :)
+    */
+    
+    grid-template-columns:
+    [times] 4em
+    [track-1-start] 1fr
+    [track-1-end track-2-start] 1fr
+    [track-2-end track-3-start] 1fr
+    [track-3-end track-4-start] 1fr
+    [track-4-end track-5-start] 1fr
+    [track-5-end track-6-start] 1fr
+    [track-6-end];    
+}
+.semester
+{
+    font-weight: bold;
+    font-size:.75em;
+}
+.course {
+    padding: .5em;
+    border-radius: 2px;
+    font-size: 14px;
+    box-shadow:
+    rgba(255,255,255,.6) 1px 1px 0,
+    rgba(0,0,0,.3) 4px 4px 0;
+    background-color: rgb(190, 207, 37);
+}
+.course-title a{
+    text-decoration: none;
+    color: black;
+}
+.last{
+    background-color: rgb(184, 62, 62);
+}
+.wahl{
+    background-color: rgb(151, 151, 40);
+}
+.course:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+}

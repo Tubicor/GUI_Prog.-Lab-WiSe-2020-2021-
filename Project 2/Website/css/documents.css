@@ -1,0 +1,30 @@
+.documents{
+    margin: 1em;
+    text-align: left;
+}
+.documents table{
+    width: 100%;
+}
+.documents tr:nth-child(even){
+    background-color: rgba(0, 0, 0, 0.192);
+}
+.documents table tr th:last-child{
+    width: 20%;
+}
+.documents th{
+    padding: .7em 0 .7em .3em;
+    font-weight: normal;
+}
+.documents table img{
+    width: 3em;
+}
+.documents table img:hover{
+    animation: showDown 1s;    
+    animation-iteration-count: infinite;
+}
+
+@keyframes showDown{
+    50%{
+        transform: translateY(1.1em) scaleY(0.9);
+    }
+}
