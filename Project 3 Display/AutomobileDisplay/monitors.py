@@ -1,13 +1,16 @@
 import variables
 import pygame
 import pygame.freetype
-from datetime import timedelta
 from datetime import datetime
 
-#TODO Adopt moving of parten Display 
+blockFaderMMM = False
+#TODO Adopt moving of parent Display
+#every Text  in one class for readabillity 
+#change constant Events to named Event
 
 class MultiMediaMonitor(object):
     def __init__(self,x,y,width,height,border_radius):
+        self.textSmallFont = pygame.freetype.SysFont(variables.FONTVERYSMALL[0],variables.FONTVERYSMALL[1]+5)
         self.rect: pygame.rect.Rect = pygame.rect.Rect(x,y,width,height)
         self.color = pygame.color.Color(0,0,0)
         self.border_radius = border_radius
@@ -18,8 +21,14 @@ class MultiMediaMonitor(object):
         self.fading = None
         self.continousBehaivor = 'Next'
 
-        self.monitors = [MusicMonitor(Rect=self.rect),SpeedMonitor(Rect=self.rect)]
+        self.monitors = [StatsMonitor(Rect=self.rect),MusicMonitor(Rect=self.rect),SpeedMonitor(Rect=self.rect)]
         self.iterator = 0
+
+        self.textTime = str(datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
+        self.textTimeRect = self.textSmallFont.get_rect(self.textTime)
+        self.textTimeRect.center = (self.rect.midtop[0],self.rect.midtop[1]+25)
+
+        
 
     def next(self):
         if not self.fading:
@@ -37,17 +46,24 @@ class MultiMediaMonitor(object):
         pygame.draw.rect(screen,self.color,self.rect,border_radius=self.border_radius)
 
         self.monitors[self.iterator].draw(screen)
-        
         if self.fading:
             self.veil.set_alpha(self.alpha)
-            screen.blit(self.veil,(self.rect.x,self.rect.y))
+            screen.blit(self.veil,(self.rect.x,self.rect.y))        
+        
+        self.textSmallFont.render_to(screen,self.textTimeRect,self.textTime,variables.WHITE)
 
     def update(self,dt,events):
+        global blockFaderMMM
         for event in events:
-            if event.type == variables.BUTTONUP:
+            if event.type == variables.BUTTONUP and not blockFaderMMM:
                 self.previous()
-            if event.type == variables.BUTTONDOWN:
+            if event.type == variables.BUTTONDOWN and not blockFaderMMM:
+                print("fading")
                 self.next()
+            if event.type == variables.SECOUND:
+                self.textTime = str(datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
+                self.textTimeRect = self.textSmallFont.get_rect(self.textTime)
+                self.textTimeRect.center = (self.rect.midtop[0],self.rect.midtop[1]+25)
 
         self.monitors[self.iterator].update(dt,events)
 
@@ -80,7 +96,8 @@ class Monitor():
         self._mmmRect = kwargs.get("Rect")
         self._center = self._mmmRect .center
         
-        self.textSmallFont = pygame.freetype.SysFont(variables.FONTRVERYSMALL[0],variables.FONTRVERYSMALL[1])
+        self.textVerySmallFont = pygame.freetype.SysFont(variables.FONTVERYSMALL[0],variables.FONTVERYSMALL[1])
+        self.textSmallFont = pygame.freetype.SysFont(variables.FONTSMALL[0],variables.FONTSMALL[1])
         self.textMediumFont = pygame.freetype.SysFont(variables.FONTMEDIUM[0],variables.FONTMEDIUM[1])        
         self.textBigFont = pygame.freetype.SysFont(variables.FONTBIG[0],variables.FONTBIG[1])
         
@@ -102,18 +119,14 @@ class MusicMonitor(Monitor):
         self.songArtists = []
         self.songDurations = []
         for song in songs:
-            print("Assets\Music\{}.jpg".format(song))
             picture = pygame.image.load("Assets\Music\Songs\{}.jpg".format(song))
             picture = pygame.transform.scale(picture,(160,160))
             pictureRect = picture.get_rect()
             self.songPictures += [[picture,pictureRect]] # not smart just need one rect for left one for middle and one for right
             songSplit = song.split("-")
-            print(songSplit)
             self.songArtists += [songSplit[0]]
             self.songNames += [songSplit[1]]
             self.songDurations += [int(songSplit[2].replace("'",""))]
-        print(self.songNames)
-        print(self.songDurations)
         self.iterator= 0
         
         self.playing=False
@@ -121,11 +134,11 @@ class MusicMonitor(Monitor):
         self.lastPlayTime = 0
 
         self.textSongName = self.songNames[self.iterator]
-        self.textSongNameRect =self.textSmallFont.get_rect(self.textSongName)
+        self.textSongNameRect =self.textVerySmallFont.get_rect(self.textSongName)
         self.textSongNameRect.center = (self._center[0],self._center[1]+15)
 
         self.textArtist = self.songArtists[self.iterator]
-        self.textArtistRect =self.textSmallFont.get_rect(self.textArtist)
+        self.textArtistRect =self.textVerySmallFont.get_rect(self.textArtist)
         self.textArtistRect.midtop = (self._center[0],self._center[1]+28)
 
         self.playImage = pygame.image.load("Assets\Music\MusicPlay.png")
@@ -161,12 +174,12 @@ class MusicMonitor(Monitor):
 
         self.textPlayDur = str(int(self.playDur)).zfill(3)
         self.textPlayDur = self.textPlayDur[:1]+":"+self.textPlayDur[1:]
-        self.textPlayDurRect = self.textSmallFont.get_rect(self.textPlayDur)
+        self.textPlayDurRect = self.textVerySmallFont.get_rect(self.textPlayDur)
         self.textPlayDurRect.topleft = (self.progressBarRect.bottomleft[0],self.progressBarRect.bottomleft[1]+5)
         
         self.textTotalDur = str(self.songDurations[self.iterator])
         self.textTotalDur = self.textTotalDur[:1]+":"+self.textTotalDur[1:]
-        self.textTotalDurRect = self.textSmallFont.get_rect(self.textTotalDur)
+        self.textTotalDurRect = self.textVerySmallFont.get_rect(self.textTotalDur)
         self.textTotalDurRect.topright = (self.progressBarRect.bottomright[0],self.progressBarRect.bottomright[1]+5)
 
     def draw(self, screen):
@@ -186,8 +199,8 @@ class MusicMonitor(Monitor):
         self.songPictures[self.iterator][1].center = (self._center[0],self._center[1]-80)
         screen.blit(self.songPictures[self.iterator][0],self.songPictures[self.iterator][1])
         #Song Title
-        self.textSmallFont.render_to(screen,self.textArtistRect,self.textArtist,variables.WHITE)
-        self.textSmallFont.render_to(screen,self.textSongNameRect,self.textSongName,variables.WHITE,style=pygame.freetype.STYLE_STRONG)
+        self.textVerySmallFont.render_to(screen,self.textArtistRect,self.textArtist,variables.WHITE)
+        self.textVerySmallFont.render_to(screen,self.textSongNameRect,self.textSongName,variables.WHITE,style=pygame.freetype.STYLE_STRONG)
         # Steering
         if not self.playing:
             screen.blit(self.playImage,self.playImageRect)
@@ -199,8 +212,8 @@ class MusicMonitor(Monitor):
         #progressbar
         pygame.draw.rect(screen,variables.WHITE,self.progressBarRect,border_radius=2)
         pygame.draw.rect(screen,variables.GREEN,self.progressBarGreenRect,border_radius=2)
-        self.textSmallFont.render_to(screen,self.textPlayDurRect,self.textPlayDur,variables.GREEN)
-        self.textSmallFont.render_to(screen,self.textTotalDurRect,self.textTotalDur,variables.WHITE)
+        self.textVerySmallFont.render_to(screen,self.textPlayDurRect,self.textPlayDur,variables.GREEN)
+        self.textVerySmallFont.render_to(screen,self.textTotalDurRect,self.textTotalDur,variables.WHITE)
 
         super().draw(screen)
     def update(self,dt,events):
@@ -240,11 +253,11 @@ class MusicMonitor(Monitor):
             self.nextImageRect.right -=3;
 
         self.textSongName = self.songNames[self.iterator]
-        self.textSongNameRect =self.textSmallFont.get_rect(self.textSongName)
+        self.textSongNameRect =self.textVerySmallFont.get_rect(self.textSongName)
         self.textSongNameRect.center = (self._center[0],self._center[1]+15)
 
         self.textArtist = self.songArtists[self.iterator]
-        self.textArtistRect =self.textSmallFont.get_rect(self.textArtist)
+        self.textArtistRect =self.textVerySmallFont.get_rect(self.textArtist)
         self.textArtistRect.midtop = (self._center[0],self._center[1]+28)
 
         self.progressBarGreenRect.width = self.progressBarRect.width * (self.playDur/self.songDurations[self.iterator])
@@ -277,7 +290,7 @@ class MusicMonitor(Monitor):
                 self.iterator = len(self.songNames)-1
         self.playDur = 0
 
-class SpeedMonitor(Monitor):
+class SpeedMonitor(Monitor): 
     def __init__(self,*args,**kwargs):        
         super().__init__(*args,**kwargs)
 
@@ -287,7 +300,7 @@ class SpeedMonitor(Monitor):
         self.speedRect.midbottom = (self._center[0],180)
         #Text - KM/H
         self.textKMH = "KM/H"
-        self.textKMHRect = self.textSmallFont.get_rect(self.textKMH)
+        self.textKMHRect = self.textVerySmallFont.get_rect(self.textKMH)
         self.textKMHRect.center = (self._center[0],190)
         #Trip 
         self.trip = f"{variables.trip:.1f}"
@@ -295,7 +308,7 @@ class SpeedMonitor(Monitor):
         self.tripRect.midtop = (self._center[0],340)
         #Text - Trip
         self.textTrip = "Trip :"
-        self.textTripRect = self.textSmallFont.get_rect(self.textTrip)
+        self.textTripRect = self.textVerySmallFont.get_rect(self.textTrip)
         self.textTripRect.center = (self._center[0],325)
         #TotalKM
         self.totalKM = str(variables.totalKM+int(variables.trip))
@@ -303,23 +316,23 @@ class SpeedMonitor(Monitor):
         self.totalKMRect.midtop = (self._center[0],420)
         #Text - TotalKM
         self.textTotalKM = "Total Kilometers:"
-        self.textTotalKMRect = self.textSmallFont.get_rect(self.textTotalKM)
+        self.textTotalKMRect = self.textVerySmallFont.get_rect(self.textTotalKM)
         self.textTotalKMRect.center = (self._center[0],405)
 
 
     def draw(self, screen):  
         #Speed
-        self.textBigFont.render_to(screen,self.speedRect,self.speed,variables.WHITE)        
+        self.textBigFont.render_to(screen,self.speedRect,self.speed,variables.WHITE)  
         #Text - KM/H
-        self.textSmallFont.render_to(screen,self.textKMHRect,self.textKMH,variables.WHITE,style=pygame.freetype.STYLE_OBLIQUE)
+        self.textVerySmallFont.render_to(screen,self.textKMHRect,self.textKMH,variables.WHITE,style=pygame.freetype.STYLE_OBLIQUE)
         #Trip
         self.textMediumFont.render_to(screen,self.tripRect,self.trip,variables.WHITE)
         #Text - Trip
-        self.textSmallFont.render_to(screen,self.textTripRect,self.textTrip,variables.WHITE,style=pygame.freetype.STYLE_OBLIQUE)
+        self.textVerySmallFont.render_to(screen,self.textTripRect,self.textTrip,variables.WHITE,style=pygame.freetype.STYLE_OBLIQUE)
         #TotalKM
         self.textMediumFont.render_to(screen,self.totalKMRect,self.totalKM,variables.WHITE)
         #Text - TotalKM
-        self.textSmallFont.render_to(screen,self.textTotalKMRect,self.textTotalKM,variables.WHITE,style=pygame.freetype.STYLE_OBLIQUE)
+        self.textVerySmallFont.render_to(screen,self.textTotalKMRect,self.textTotalKM,variables.WHITE,style=pygame.freetype.STYLE_OBLIQUE)
 
         super().draw(screen)
     def update(self,dt,events):
@@ -343,3 +356,105 @@ class SpeedMonitor(Monitor):
         self.textTotalKMRect.center = (self._center[0],405)
 
         super().update(dt,events)
+
+class StatsMonitor(Monitor):
+    def __init__(self, *args, **kwargs):        
+        super().__init__(*args,**kwargs)
+        self.imageSetting = pygame.image.load("Assets\settings.png")
+        self.imageSetting = pygame.transform.scale(self.imageSetting,(100,100))
+        self.imageSettingRect = self.imageSetting.get_rect()
+        self.imageSettingRect.center = (self._center[0],self._center[1]-120)
+        self.menuRect = pygame.rect.Rect(self._mmmRect.topleft[0]+25,self._mmmRect.topleft[1]+180,self._mmmRect.width-50,self._mmmRect.height-237)
+        self.menuItems = []
+        
+        iterator = 0
+        for item in [">Mode",">Temperature",">Fuel",">Battery",">Tire Pressure"]:
+            position = (self.menuRect.topleft[0]+20,self.menuRect.topleft[1]+15+40*iterator)
+            rect = pygame.rect.Rect(0,0,200,35)
+            rect.topleft = position[0],position[1]
+            rect.left -=10
+            rect.top -= 7
+            self.menuItems += [[Text(lambda item=item:item,self.textSmallFont,position,align="Left",color=variables.WHITE),
+                                rect]]
+            iterator +=1
+        self.insideMenu = False
+        self.selectedItem = 0
+
+    def draw(self, screen):
+        screen.blit(self.imageSetting,self.imageSettingRect)                  
+        color = variables.GREY
+        colorMenu = variables.WHITE
+        
+        if(self.insideMenu):    
+            color = variables.WHITE
+            colorMenu = variables.GREY
+
+        pygame.draw.rect(screen,colorMenu,self.menuRect,border_radius=2)
+        #Draw a white line around if inside
+        if self.insideMenu:
+            pygame.draw.rect(screen,variables.WHITE,self.menuRect,2,border_radius=2) 
+        
+        iterator = 0
+        for item in self.menuItems:            
+            pygame.draw.rect(screen,color,item[1],border_radius=3)
+            if self.insideMenu and self.selectedItem == iterator:                
+                pygame.draw.rect(screen,colorMenu,item[1],border_radius=3)
+            item[0].draw(screen)
+            iterator +=1
+            
+
+        return super().draw(screen)
+    def update(self, dt, events):
+        global blockFaderMMM
+        for event in events:
+            if event.type == variables.BUTTONMIDDLE:
+                self.insideMenu = True  
+                blockFaderMMM = True
+                self.selectedItem = 0
+            if event.type == variables.BUTTONLEFT:
+                self.insideMenu = False
+                blockFaderMMM = False
+            if event.type == variables.BUTTONDOWN:
+                if self.insideMenu:
+                    self.selectedItem+=1
+                    if self.selectedItem>= len(self.menuItems):
+                        self.selectedItem= 0
+            if event.type == variables.BUTTONUP:
+                if self.insideMenu:
+                    self.selectedItem-= 1
+                    if self.selectedItem<0:
+                        self.selectedItem= len(self.menuItems)-1
+        iterator = 0
+        if self.insideMenu:
+            for item in self.menuItems:
+                item[0].color = variables.GREY
+                if iterator == self.selectedItem:
+                    item[0].color = variables.WHITE
+                iterator += 1
+        else:
+            for item in self.menuItems:
+                item[0].color = variables.WHITE
+                iterator += 1
+            
+        return super().update(dt, events)
+
+class Text:
+    def __init__(self,textFunc,font,position,color=variables.WHITE,align="Center"):
+        self.textFunc = textFunc
+        self.font = font   
+        self.position = position        
+        self.color = color
+        self.rect = self.font.get_rect(self.textFunc())
+        self.align = align
+        if self.align == "Left":
+            self.rect.topleft = self.position
+        else:
+            self.rect.center = self.position
+    def draw(self,screen):
+        self.font.render_to(screen,self.rect,self.textFunc(),self.color)
+    def update(self):
+        self.rect = self.font.get_rect(self.textFunc())
+        if self.align == "Left":
+            self.rect.topleft = self.position
+        else:
+            self.rect.center = self.position

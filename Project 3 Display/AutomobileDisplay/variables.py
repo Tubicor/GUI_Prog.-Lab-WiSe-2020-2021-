@@ -24,9 +24,10 @@ BIGFONT = pygame.font.SysFont("Arial",75)
 FONTBIG = ('Arial',120)
 FONTMEDIUM = ('Arial',60)
 FONTSMALL = ('Arial',30)
-FONTRVERYSMALL= ('Arial',20)
+FONTVERYSMALL= ('Arial',20)
 WHITE = (255,255,255)
 GREEN = (0,255,0)
+GREY = (50,50,50)
 
 
 speed = 0

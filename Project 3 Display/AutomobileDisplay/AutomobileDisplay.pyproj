@@ -55,6 +55,7 @@
     <Content Include="Assets\Music\MusicPlay.png" />
     <Content Include="Assets\Music\Songs\Razz-Let it in,Let it out-3%2746.jpg" />
     <Content Include="Assets\Music\Songs\The Beatles-Hey Jude-3%2732.jpg" />
+    <Content Include="Assets\settings.png" />
     <Content Include="Assets\Typo-Style-Demo-Bold-Italic.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
