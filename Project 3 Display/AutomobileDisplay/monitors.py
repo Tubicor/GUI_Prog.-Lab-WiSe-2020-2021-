@@ -365,7 +365,10 @@ class StatsMonitor(Monitor):
         self.imageSettingRect = self.imageSetting.get_rect()
         self.imageSettingRect.center = (self._center[0],self._center[1]-120)
         self.menuRect = pygame.rect.Rect(self._mmmRect.topleft[0]+25,self._mmmRect.topleft[1]+180,self._mmmRect.width-50,self._mmmRect.height-237)
+        self.menuRectStandard = self.menuRect.copy()
         self.menuItems = []
+        self.growAnimationMenuRect = True
+        self.animationStep = 0
         
         iterator = 0
         for item in [">Mode",">Temperature",">Fuel",">Battery",">Tire Pressure"]:
@@ -435,6 +438,21 @@ class StatsMonitor(Monitor):
             for item in self.menuItems:
                 item[0].color = variables.WHITE
                 iterator += 1
+        animationSpeed = 0.5
+        if not self.insideMenu:
+            if(self.growAnimationMenuRect):
+                self.animationStep +=1            
+                if(self.menuRectStandard.height+20 < self.menuRect.height):
+                    self.growAnimationMenuRect = False
+            else:           
+                self.animationStep -=1    
+                if(self.menuRectStandard.height >= self.menuRect.height):
+                    self.growAnimationMenuRect = True
+            self.menuRect.width  = self.menuRectStandard.width + self.animationStep*animationSpeed
+            self.menuRect.height = self.menuRectStandard.height + self.animationStep*animationSpeed
+            self.menuRect.center = self.menuRectStandard.center
+        else:
+             self.menuRect = self.menuRectStandard.copy()
             
         return super().update(dt, events)
 
