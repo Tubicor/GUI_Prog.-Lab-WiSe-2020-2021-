@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Assets"
+    "\\Assets",
+    "\\Assets\\Icons"
   ],
-  "SelectedNode": "\\variables.py",
+  "SelectedNode": "\\Assets\\Icons\\battery.png",
   "PreviewInSolutionExplorer": false
 }

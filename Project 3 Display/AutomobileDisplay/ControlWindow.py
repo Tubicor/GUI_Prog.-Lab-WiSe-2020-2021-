@@ -8,7 +8,6 @@ def controlWindow():
     controller = Controller()
     controller.loop()
 
-
 class Controller():
     def __init__(self):        
         self.root = tk.Tk()        
