@@ -36,8 +36,15 @@ carTemperature = 25
 battery = 14.5
 trip = 0
 totalKM = 66600
-lights = [False,False]  #[Front,Rear]
-turnLights = "out"      #possible = out, left, right, bothBlinking
-doors = [False,False,False]#False = door shut | [Driver Door, Co-Driver Door, Tailgate]
 mode = AVAILABLEMODES[0]
 tirePressure = [2.5,2.5,2.8,2.8] # LeftFront - RightFront LeftRear RightRear
+#icons
+airbag = True
+doorOpen = True
+fogLight = True
+highBeam = True
+hoodOpen = True
+lowBeam = True
+malfunction = True
+oil = True
+trunk = True

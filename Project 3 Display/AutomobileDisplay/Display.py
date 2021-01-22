@@ -93,6 +93,29 @@ class DriveScene():
         self.tempMeter  =RotatingImage(901,300,0,235,35,pygame.image.load("Assets\MeterFuel.png"))
         
         self.mmMonitor = MultiMediaMonitor(555,40,270,450,20)
+        #icons
+        iconSize = 35
+        self.iconAirbag = pygame.transform.scale(pygame.image.load("Assets\Icons\Airbag.png"),(iconSize,iconSize))
+        self.iconBattery= pygame.transform.scale(pygame.image.load("Assets\Icons\Battery.png"),(iconSize,iconSize))
+        self.iconDoors= pygame.transform.scale(pygame.image.load("Assets\Icons\doors.png"),(iconSize,iconSize))
+        self.iconEngineTemp= pygame.transform.scale(pygame.image.load("Assets\Icons\engine-coolant.png"),(iconSize,iconSize))
+        self.iconFogLight= pygame.transform.scale(pygame.image.load("Assets\Icons\\fog-light.png"),(iconSize,iconSize))
+        self.iconFuel= pygame.transform.scale(pygame.image.load("Assets\Icons\\fuel-filling.png"),(iconSize,iconSize))
+        self.iconHighBeam= pygame.transform.scale(pygame.image.load("Assets\Icons\high-beam.png"),(iconSize,iconSize))
+        self.iconHood= pygame.transform.scale(pygame.image.load("Assets\Icons\hood.png"),(iconSize,iconSize))
+        self.iconLowBeam= pygame.transform.scale(pygame.image.load("Assets\Icons\low-beam.png"),(iconSize,iconSize))
+        self.iconEngineError= pygame.transform.scale(pygame.image.load("Assets\Icons\malfunction-indicador.png"),(iconSize,iconSize))
+        self.iconOil= pygame.transform.scale(pygame.image.load("Assets\Icons\oil.png"),(iconSize,iconSize))
+        self.iconTrunk= pygame.transform.scale(pygame.image.load("Assets\Icons\\trunk.png"),(iconSize,iconSize))
+        
+        self.iconsPlaceLeft = []
+        self.iconsPlaceRight = []
+        radius = 120
+        pygame
+        for i in range(6):
+            self.iconsPlaceLeft += [(int(math.cos(math.radians(180 + 180/5 *i))*radius+230),int(math.sin(math.radians(180 +180/5 *i))*radius+245))]
+            self.iconsPlaceRight += [(int(math.cos(math.radians(180 + 180/5 *i))*radius+1110),int(math.sin(math.radians(180 +180/5 *i))*radius+245))]
+            
 
     def draw(self,screen):
         #update Position is not in updateFunction since it only is important to drawing
@@ -109,6 +132,21 @@ class DriveScene():
         self.textMediumFont.render_to(screen,(self.tX+870,self.tY+460),self.gear,variables.WHITE,style=pygame.freetype.STYLE_STRONG)
         self.textSmallFont.render_to(screen,(self.tX+840,self.tY+430),self.textGear,variables.WHITE)
         self.mmMonitor.draw(screen)
+
+        #icons left
+        screen.blit(self.iconAirbag,self.iconsPlaceLeft[0])
+        screen.blit(self.iconBattery,self.iconsPlaceLeft[1])
+        screen.blit(self.iconDoors,self.iconsPlaceLeft[2])
+        screen.blit(self.iconEngineTemp,self.iconsPlaceLeft[3])
+        screen.blit(self.iconFogLight,self.iconsPlaceLeft[4])
+        screen.blit(self.iconFuel,self.iconsPlaceLeft[5])
+        #icons right
+        screen.blit(self.iconHighBeam,self.iconsPlaceRight[0])
+        screen.blit(self.iconHood,self.iconsPlaceRight[1])
+        screen.blit(self.iconLowBeam,self.iconsPlaceRight[2])
+        screen.blit(self.iconEngineError,self.iconsPlaceRight[3])
+        screen.blit(self.iconOil,self.iconsPlaceRight[4])
+        screen.blit(self.iconTrunk,self.iconsPlaceRight[5])
 
     def update(self, dt, events):        
         self.sPointer.angle = 4 + 360*45/40*(variables.speed/variables.MAXSPEED)
