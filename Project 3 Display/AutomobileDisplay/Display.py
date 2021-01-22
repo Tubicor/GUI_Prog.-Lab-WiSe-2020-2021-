@@ -134,19 +134,31 @@ class DriveScene():
         self.mmMonitor.draw(screen)
 
         #icons left
-        screen.blit(self.iconAirbag,self.iconsPlaceLeft[0])
-        screen.blit(self.iconBattery,self.iconsPlaceLeft[1])
-        screen.blit(self.iconDoors,self.iconsPlaceLeft[2])
-        screen.blit(self.iconEngineTemp,self.iconsPlaceLeft[3])
-        screen.blit(self.iconFogLight,self.iconsPlaceLeft[4])
-        screen.blit(self.iconFuel,self.iconsPlaceLeft[5])
+        if(variables.airbag):
+            screen.blit(self.iconAirbag,self.iconsPlaceLeft[0])
+        if(variables.battery < 11):#TODO
+            screen.blit(self.iconBattery,self.iconsPlaceLeft[1])
+        if(variables.doorOpen):
+            screen.blit(self.iconDoors,self.iconsPlaceLeft[2])
+        if(variables.engineTemperature > 100):
+            screen.blit(self.iconEngineTemp,self.iconsPlaceLeft[3])
+        if(variables.fogLight):
+            screen.blit(self.iconFogLight,self.iconsPlaceLeft[4])
+        if(variables.fuel < 5):
+            screen.blit(self.iconFuel,self.iconsPlaceLeft[5])
         #icons right
-        screen.blit(self.iconHighBeam,self.iconsPlaceRight[0])
-        screen.blit(self.iconHood,self.iconsPlaceRight[1])
-        screen.blit(self.iconLowBeam,self.iconsPlaceRight[2])
-        screen.blit(self.iconEngineError,self.iconsPlaceRight[3])
-        screen.blit(self.iconOil,self.iconsPlaceRight[4])
-        screen.blit(self.iconTrunk,self.iconsPlaceRight[5])
+        if(variables.highBeam):
+            screen.blit(self.iconHighBeam,self.iconsPlaceRight[0])
+        if(variables.hoodOpen):
+            screen.blit(self.iconHood,self.iconsPlaceRight[1])
+        if(variables.lowBeam):
+            screen.blit(self.iconLowBeam,self.iconsPlaceRight[2])
+        if(variables.malfunction):
+            screen.blit(self.iconEngineError,self.iconsPlaceRight[3])
+        if(variables.oil):
+            screen.blit(self.iconOil,self.iconsPlaceRight[4])
+        if(variables.trunk):
+            screen.blit(self.iconTrunk,self.iconsPlaceRight[5])
 
     def update(self, dt, events):        
         self.sPointer.angle = 4 + 360*45/40*(variables.speed/variables.MAXSPEED)
@@ -207,6 +219,3 @@ def display():
 
 if __name__ == "__main__":
     display()
-
-
-#Icons by Freepik
