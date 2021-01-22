@@ -1,5 +1,6 @@
 import variables
 import tkinter as tk
+from tkinter import font as tkFont
 import pygame
 
 
@@ -13,45 +14,51 @@ class Controller():
         self.root = tk.Tk()        
         self.speedVar = tk.DoubleVar()
         self.radioVar = tk.IntVar()
+      
 
         self.radioFrame = tk.Frame(master=self.root);
-        self.radioFrame.grid(row=0,column=4)
-        r1 = tk.Radiobutton(self.radioFrame,text=variables.AVAILABLEMODES[0],variable =self.radioVar,value=0, command=self.calcRPMandGear)
+        self.radioFrame.grid()
+        r1 = tk.Radiobutton(self.radioFrame,text=variables.AVAILABLEMODES[0],variable =self.radioVar,value=0, command=self.setMode)
         r1.grid()
-        r2 = tk.Radiobutton(self.radioFrame,text=variables.AVAILABLEMODES[1],variable =self.radioVar,value=1, command=self.calcRPMandGear)
+        r2 = tk.Radiobutton(self.radioFrame,text=variables.AVAILABLEMODES[1],variable =self.radioVar,value=1, command=self.setMode)
         r2.grid()
-        r3 = tk.Radiobutton(self.radioFrame,text=variables.AVAILABLEMODES[2],variable =self.radioVar,value=2, command=self.calcRPMandGear)
+        r3 = tk.Radiobutton(self.radioFrame,text=variables.AVAILABLEMODES[2],variable =self.radioVar,value=2, command=self.setMode)
         r3.grid()
 
         self.navButtonFrame = tk.Frame(master=self.root)
-        self.navButtonFrame.grid(row=1,column=4)
-        up = tk.Button(self.navButtonFrame,text="^",command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONUP)))
+        self.navButtonFrame.grid(row=0,column=2)
+        up = tk.Button(self.navButtonFrame,text="^",font=("Arial", 25),command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONUP)))
         up.grid(row=0,column=1)
-        left = tk.Button(self.navButtonFrame,text="<",command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONLEFT)))
+        left = tk.Button(self.navButtonFrame,text="<",font=("Arial", 25),command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONLEFT)))
         left.grid(row=1,column=0)
-        middle = tk.Button(self.navButtonFrame,text="0",command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONMIDDLE)))
+        middle = tk.Button(self.navButtonFrame,text="0",font=("Arial", 25),command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONMIDDLE)))
         middle.grid(row=1,column=1)
-        right = tk.Button(self.navButtonFrame,text=">",command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONRIGHT)))
+        right = tk.Button(self.navButtonFrame,text=">",font=("Arial", 25),command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONRIGHT)))
         right.grid(row=1,column=2)
-        down = tk.Button(self.navButtonFrame,text="v",command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONDOWN)))
+        down = tk.Button(self.navButtonFrame,text="v",font=("Arial", 25),command = lambda :pygame.event.post(pygame.event.Event(variables.BUTTONDOWN)))
         down.grid(row=2,column=1)
 
-        self.speedLabel = tk.Label(master=self.root,text="Speed : 0",font=("Arial", 16))
+        self.sliderFrame = tk.Frame(master= self.root)
+        self.sliderFrame.columnconfigure(0,minsize=200)
+        self.sliderFrame.columnconfigure(1,minsize=100)
+        self.sliderFrame.columnconfigure(2,minsize=200)
+        self.sliderFrame.grid(columnspan=2)
+        self.speedLabel = tk.Label(master=self.sliderFrame,text="Speed : 0",font=("Arial", 16))
         self.speedLabel.grid(row=0)
-        self.speedSlider = tk.Scale(master=self.root,length = 500,variable = self.speedVar, from_=0,showvalue =0,to=variables.MAXSPEED,resolution =0.1,orient=tk.VERTICAL,command=self.calcRPMandGear)
+        self.speedSlider = tk.Scale(master=self.sliderFrame,length = 300,variable = self.speedVar, from_=0,showvalue =0,to=variables.MAXSPEED,resolution =0.1,orient=tk.VERTICAL,command=self.calcRPMandGear)
         self.speedSlider.grid(row=1)
-        self.fuelLable = tk.Label(master=self.root,text="Fuel : 0%",font=("Arial", 16))
+        self.fuelLable = tk.Label(master=self.sliderFrame,text="Fuel : 0%",font=("Arial", 16))
         self.fuelLable.grid(column=1,row=0)
-        self.fuelSlider = tk.Scale(master=self.root,length = 500, from_=0,showvalue =0,to=variables.MAXFUEL,resolution =1,orient=tk.VERTICAL,command=self.variables)
+        self.fuelSlider = tk.Scale(master=self.sliderFrame,length = 300, from_=0,showvalue =0,to=variables.MAXFUEL,resolution =1,orient=tk.VERTICAL,command=self.variables)
         self.fuelSlider.set(100)
         self.fuelSlider.grid(column=1,row=1)
-        self.tempLable = tk.Label(master=self.root,text="Temp : 0 C",font=("Arial", 16))
-        self.tempLable.grid(column=2,row=0)
-        self.tempSlider = tk.Scale(master=self.root,length = 500, from_=0,showvalue =0,to=variables.MAXTEMP,resolution =1,orient=tk.VERTICAL,command=self.variables)
-        self.tempSlider.grid(column=2,row=1)
+        self.engineTemperatureLable = tk.Label(master=self.sliderFrame,text="engineTemp : 0 C",font=("Arial", 16))
+        self.engineTemperatureLable.grid(column=2,row=0)
+        self.engineTemperatureSlider = tk.Scale(master=self.sliderFrame,length = 300, from_=0,showvalue =0,to=variables.MAXTEMP,resolution =1,orient=tk.VERTICAL,command=self.variables)
+        self.engineTemperatureSlider.grid(column=2,row=1)
         
         self.neutralButton = tk.Button(master=self.root,text="Neutral Gear",command=self.neutral)
-        self.neutralButton.grid(column=3,row=0)
+        self.neutralButton.grid(column=1,row=0)
     def loop(self):
         tk.mainloop()
 
@@ -59,11 +66,11 @@ class Controller():
     def variables(self,event=None):
         variables.speed = (self.speedVar.get())**2/variables.MAXSPEED
         variables.fuel = self.fuelSlider.get()
-        variables.temp = self.tempSlider.get()
+        variables.engineTemperature = self.engineTemperatureSlider.get()
         self.speedLabel["text"] = "Speed : {}".format(int(variables.speed))
-        self.fuelLable["text"] = "Fuel : {}%".format(int(variables.fuel))
-        self.tempLable["text"] = "Temperatur : {} C".format(int(variables.temp))
-        variables.mode = variables.AVAILABLEMODES[self.radioVar.get()]
+        self.fuelLable["text"] = "Fuel : {}%".format(int(variables.fuel/variables.MAXFUEL*100))
+        self.engineTemperatureLable["text"] = "engineTemp : {} C".format(int(variables.engineTemperature))
+        self.radioVar.set( variables.AVAILABLEMODES.index(variables.mode))
 
     def calcRPMandGear(self,event=None):
         self.variables()
@@ -110,7 +117,9 @@ class Controller():
             self.variables()
         else:
             self.neutralButton["state"] = "normal"
-
+    def setMode(self):
+        variables.mode = variables.AVAILABLEMODES[self.radioVar.get()]
+        self.calcRPMandGear();
         
 if __name__ == "__main__":
     controlWindow()

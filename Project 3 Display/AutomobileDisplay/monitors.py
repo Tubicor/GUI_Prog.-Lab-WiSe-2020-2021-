@@ -4,9 +4,6 @@ import pygame.freetype
 from datetime import datetime
 
 blockFaderMMM = False
-#TODO Adopt moving of parent Display
-#every Text  in one class for readabillity 
-#change constant Events to named Event
 
 class MultiMediaMonitor(object):
     def __init__(self,x,y,width,height,border_radius):
@@ -14,14 +11,17 @@ class MultiMediaMonitor(object):
         self.rect: pygame.rect.Rect = pygame.rect.Rect(x,y,width,height)
         self.color = pygame.color.Color(0,0,0)
         self.border_radius = border_radius
-        self.veil = pygame.Surface(self.rect.size) 
+        self.veil = pygame.Surface((self.rect.size[0],self.rect.size[1]-13))
         self.veil.fill((0,0,0))
         self.alpha = 0
 
         self.fading = None
         self.continousBehaivor = 'Next'
 
-        self.monitors = [StatsMonitor(Rect=self.rect),MusicMonitor(Rect=self.rect),SpeedMonitor(Rect=self.rect)]
+        self.monitors = [SpeedMonitor(Rect=self.rect),
+                         NavigationMonitor(Rect=self.rect),
+                         MusicMonitor(Rect=self.rect),
+                         StatsMonitor(Rect=self.rect)]
         self.iterator = 0
 
         self.textTime = str(datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
@@ -356,6 +356,16 @@ class SpeedMonitor(Monitor):
         self.textTotalKMRect.center = (self._center[0],405)
 
         super().update(dt,events)
+class NavigationMonitor(Monitor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.navImage = pygame.image.load("Assets\\Navigation.png")
+        self.navImageRect = self.navImage.get_rect()
+        self.navImageRect.center = (self._center[0],self._center[1]+10)
+    def draw(self, screen):
+        super().draw(screen)
+        screen.blit(self.navImage,self.navImageRect)
+
 
 class StatsMonitor(Monitor):
     def __init__(self, *args, **kwargs):        
@@ -380,7 +390,13 @@ class StatsMonitor(Monitor):
             self.menuItems += [[Text(lambda item=item:item,self.textSmallFont,position,align="Left",color=variables.WHITE),
                                 rect]]
             iterator +=1
+        self.menuItemMonitors = [StatsMonitorMode(StatsMonitor=self,Rect=self._mmmRect),
+                                 StatsMonitorTemperature(StatsMonitor=self,Rect=self._mmmRect),
+                                 StatsMonitorFuel(StatsMonitor=self,Rect=self._mmmRect),
+                                 StatsMonitorBattery(StatsMonitor=self,Rect=self._mmmRect),
+                                 StatsMonitorTirePressure(StatsMonitor=self,Rect=self._mmmRect)]
         self.insideMenu = False
+        self.insideMenuItem = -1
         self.selectedItem = 0
 
     def draw(self, screen):
@@ -396,14 +412,16 @@ class StatsMonitor(Monitor):
         #Draw a white line around if inside
         if self.insideMenu:
             pygame.draw.rect(screen,variables.WHITE,self.menuRect,2,border_radius=2) 
-        
-        iterator = 0
-        for item in self.menuItems:            
-            pygame.draw.rect(screen,color,item[1],border_radius=3)
-            if self.insideMenu and self.selectedItem == iterator:                
-                pygame.draw.rect(screen,colorMenu,item[1],border_radius=3)
-            item[0].draw(screen)
-            iterator +=1
+        if(self.insideMenuItem != -1):
+            self.menuItemMonitors[self.insideMenuItem].draw(screen)
+        else:
+            iterator = 0
+            for item in self.menuItems:            
+                pygame.draw.rect(screen,color,item[1],border_radius=3)
+                if self.insideMenu and self.selectedItem == iterator:                
+                    pygame.draw.rect(screen,colorMenu,item[1],border_radius=3)
+                item[0].draw(screen)
+                iterator +=1
             
 
         return super().draw(screen)
@@ -411,22 +429,29 @@ class StatsMonitor(Monitor):
         global blockFaderMMM
         for event in events:
             if event.type == variables.BUTTONMIDDLE:
+                if(self.insideMenu):
+                    self.insideMenuItem = self.selectedItem
                 self.insideMenu = True  
                 blockFaderMMM = True
                 self.selectedItem = 0
             if event.type == variables.BUTTONLEFT:
                 self.insideMenu = False
                 blockFaderMMM = False
+                self.insideMenuItem = -1 
             if event.type == variables.BUTTONDOWN:
-                if self.insideMenu:
+                if self.insideMenu and self.insideMenuItem == -1:
                     self.selectedItem+=1
                     if self.selectedItem>= len(self.menuItems):
                         self.selectedItem= 0
             if event.type == variables.BUTTONUP:
-                if self.insideMenu:
+                if self.insideMenu and self.insideMenuItem == -1:
                     self.selectedItem-= 1
                     if self.selectedItem<0:
                         self.selectedItem= len(self.menuItems)-1
+
+        if(self.insideMenuItem != -1):
+            self.menuItemMonitors[self.insideMenuItem].update(dt,events)
+
         iterator = 0
         if self.insideMenu:
             for item in self.menuItems:
@@ -452,9 +477,193 @@ class StatsMonitor(Monitor):
             self.menuRect.height = self.menuRectStandard.height + self.animationStep*animationSpeed
             self.menuRect.center = self.menuRectStandard.center
         else:
-             self.menuRect = self.menuRectStandard.copy()
-            
-        return super().update(dt, events)
+             self.menuRect = self.menuRectStandard.copy()            
+        super().update(dt, events)
+
+class StatsMonitorMode(Monitor):
+      def __init__(self, *args, **kwargs):          
+        super().__init__(*args, **kwargs)
+        self.ParentStatsMonitor = kwargs.get("StatsMonitor")              
+        self.selectedItem = 0
+        self.menuItems = []
+        iterator = 0
+        for item in variables.AVAILABLEMODES:
+            position = (self.ParentStatsMonitor.menuRect.topleft[0]+20,self.ParentStatsMonitor.menuRect.topleft[1]+15+40*iterator)
+            rect = pygame.rect.Rect(0,0,200,35)
+            rect.topleft = position[0],position[1]
+            rect.left -=10
+            rect.top -= 7
+            self.menuItems += [[Text(lambda item=item:item,self.textSmallFont,position,align="Left",color=variables.GREY),
+                                rect]]
+            iterator +=1      
+
+      def draw(self, screen): 
+        color = variables.WHITE
+        colorMenu = variables.GREY
+
+        iterator = 0
+        for item in self.menuItems:
+            pygame.draw.rect(screen,color,item[1],border_radius=3)
+            if self.selectedItem == iterator:                
+                pygame.draw.rect(screen,colorMenu,item[1],border_radius=3)
+            #Paint the current Mode in a particular color
+            if variables.AVAILABLEMODES[iterator] == variables.mode:
+                pygame.draw.rect(screen,variables.GREEN,item[1],border_radius=3)
+                currentItemRect = item[1].copy()
+                currentItemRect.height -= 4
+                currentItemRect.width -= 4
+                currentItemRect.center = item[1].center
+                pygame.draw.rect(screen,color,currentItemRect,border_radius=3)
+                if self.selectedItem == iterator:                
+                    pygame.draw.rect(screen,colorMenu,currentItemRect,border_radius=3)
+            item[0].draw(screen)
+            iterator += 1
+        super().draw(screen)  
+
+      def update(self, dt, events):
+        for event in events:
+            if event.type == variables.BUTTONMIDDLE:
+                variables.mode = variables.AVAILABLEMODES[self.selectedItem]
+            if event.type == variables.BUTTONLEFT:
+                pass
+            if event.type == variables.BUTTONDOWN:
+                self.selectedItem+=1
+                if self.selectedItem>= len(self.menuItems):
+                    self.selectedItem= 0
+            if event.type == variables.BUTTONUP:
+                self.selectedItem-= 1
+                if self.selectedItem<0:
+                    self.selectedItem= len(self.menuItems)-1
+
+        iterator = 0
+        for item in self.menuItems:
+                item[0].color = variables.GREY
+                if iterator == self.selectedItem:
+                    item[0].color = variables.WHITE
+                iterator += 1
+        super().update(dt, events)
+class StatsMonitorTemperature(Monitor):
+    def __init__(self, *args, **kwargs):          
+        super().__init__(*args, **kwargs)
+        self.ParentStatsMonitor = kwargs.get("StatsMonitor")   
+        self.tempCar =pygame.transform.scale(pygame.image.load("Assets\cartemperature.png"),(70,70))
+        self.tempCarRect = self.tempCar.get_rect()
+        self.tempCarRect.center = self.ParentStatsMonitor.menuRect.center        
+        self.tempCarRect.x -= 60
+        self.tempCarRect.y -= 70
+        self.tempCarText = Text(lambda: str(variables.carTemperature)+" C",self.textSmallFont,(self.tempCarRect.midbottom[0],self.tempCarRect.midbottom[1]+15))
+    
+        
+
+        self.tempOutside = pygame.transform.scale(pygame.image.load("Assets\outsidetemperature.png"),(70,70))
+        self.tempOutsideRect = self.tempOutside.get_rect()
+        self.tempOutsideRect.center = self.ParentStatsMonitor.menuRect.center        
+        self.tempOutsideRect.x += 60
+        self.tempOutsideRect.y -= 70
+        self.tempOutsideText = Text(lambda: str(variables.outsideTemperature)+" C",self.textSmallFont,(self.tempOutsideRect.midbottom[0],self.tempOutsideRect.midbottom[1]+15))
+    
+
+        self.tempEngine = pygame.transform.scale(pygame.image.load("Assets\enginetemperature.png"),(70,70))
+        self.tempEngineRect = self.tempEngine.get_rect()
+        self.tempEngineRect.center = self.ParentStatsMonitor.menuRect.center        
+        self.tempEngineRect.x -= 0
+        self.tempEngineRect.y += 30
+        self.tempEngineText = Text(lambda: str(variables.engineTemperature)+" C",self.textSmallFont,(self.tempEngineRect.midbottom[0],self.tempEngineRect.midbottom[1]+15))
+    
+    def draw(self, screen):         
+        screen.blit(self.tempCar,self.tempCarRect)
+        screen.blit(self.tempOutside,self.tempOutsideRect)
+        screen.blit(self.tempEngine,self.tempEngineRect)
+        self.tempEngineText.draw(screen)
+        self.tempOutsideText.draw(screen)
+        self.tempCarText.draw(screen)
+
+    def update(self, dt, events):
+        self.tempEngineText.update()
+        self.tempOutsideText.update()
+        self.tempCarText.update()
+class StatsMonitorFuel(Monitor):
+    def __init__(self, *args, **kwargs):          
+        super().__init__(*args, **kwargs)
+        self.ParentStatsMonitor = kwargs.get("StatsMonitor")    
+        self.fuel =pygame.transform.scale(pygame.image.load("Assets\Fuel.png"),(90,90))
+        self.fuelRect = self.fuel.get_rect()
+        self.fuelRect.midtop = self.ParentStatsMonitor.menuRect.midtop        
+        self.fuelRect.y += 20
+        self.fuelText = Text(lambda:str(variables.fuel)+"L / "+str(variables.MAXFUEL)+"L",self.textSmallFont,(self.fuelRect[0]-10,self.fuelRect[1]+105),align="Left")
+        self.estimatedDistText = Text(lambda:"Dist.: "+str(int(variables.fuel*100/(8.5+variables.AVAILABLEMODES.index(variables.mode)*0.9)))+"km",self.textSmallFont,(self.fuelRect[0]+40,self.fuelRect[1]+155))
+    def draw(self, screen): 
+        screen.blit(self.fuel,self.fuelRect)
+        self.fuelText.draw(screen)
+        self.estimatedDistText.draw(screen)
+
+    def update(self, dt, events):
+        self.fuelText.update()
+        self.estimatedDistText.update()
+class StatsMonitorBattery(Monitor):
+    def __init__(self, *args, **kwargs):          
+        super().__init__(*args, **kwargs)
+        self.ParentStatsMonitor = kwargs.get("StatsMonitor")
+        self.battery =pygame.transform.scale(pygame.image.load("Assets\Battery.png"),(90,90))
+        self.batteryRect = self.battery.get_rect()
+        self.batteryRect.midtop = self.ParentStatsMonitor.menuRect.midtop        
+        self.batteryRect.y += 20
+        self.batteryText = Text(lambda:str(variables.battery)+"Volt",self.textSmallFont,(self.batteryRect[0],self.batteryRect[1]+105),align="Left")
+       
+    def draw(self, screen): 
+        screen.blit(self.battery,self.batteryRect)
+        self.batteryText.draw(screen)
+
+    def update(self, dt, events):
+        self.batteryText.update()
+        pass
+class StatsMonitorTirePressure(Monitor):
+    def __init__(self, *args, **kwargs):          
+        super().__init__(*args, **kwargs)
+        self.ParentStatsMonitor = kwargs.get("StatsMonitor")
+        self.tireL =pygame.transform.scale(pygame.image.load("Assets\Tire2.png"),(60,60))
+        self.tireFLRect = self.tireL.get_rect()
+        self.tireFLRect.midtop = self.ParentStatsMonitor.menuRect.midtop        
+        self.tireFLRect.y += 20 
+        self.tireFLRect.x -= 30
+        self.tireFLText = Text(lambda:str(variables.tirePressure[0])+"Bar",self.textVerySmallFont,(self.tireFLRect.center[0]-75,self.tireFLRect.center[1]),align="Left")
+        
+        self.tireRLRect = self.tireL.get_rect()
+        self.tireRLRect.midbottom = self.ParentStatsMonitor.menuRect.midbottom        
+        self.tireRLRect.y -= 20
+        self.tireRLRect.x -= 30
+        self.tireRLText = Text(lambda:str(variables.tirePressure[2])+"Bar",self.textVerySmallFont,(self.tireRLRect.center[0]-75,self.tireRLRect.center[1]),align="Left")
+        
+        self.tireR =pygame.transform.scale(pygame.image.load("Assets\Tire.png"),(60,60))
+        self.tireFRRect = self.tireR.get_rect()
+        self.tireFRRect.midtop = self.ParentStatsMonitor.menuRect.midtop        
+        self.tireFRRect.y += 20
+        self.tireFRRect.x += 30
+        self.tireFRText = Text(lambda:str(variables.tirePressure[1])+"Bar",self.textVerySmallFont,(self.tireFRRect.center[0]+25,self.tireFRRect.center[1]),align="Left")
+        
+        self.tireRRRect = self.tireR.get_rect()
+        self.tireRRRect.midbottom = self.ParentStatsMonitor.menuRect.midbottom        
+        self.tireRRRect.y -= 20
+        self.tireRRRect.x += 30
+        self.tireRRText = Text(lambda:str(variables.tirePressure[3])+"Bar",self.textVerySmallFont,(self.tireRRRect.center[0] + 25,self.tireRRRect.center[1]),align="Left")
+       
+
+    def draw(self, screen): 
+        screen.blit(self.tireL,self.tireFLRect)
+        self.tireFLText.draw(screen)
+        screen.blit(self.tireL,self.tireRLRect)
+        self.tireRLText.draw(screen)
+        screen.blit(self.tireR,self.tireFRRect)
+        self.tireFRText.draw(screen)
+        screen.blit(self.tireR,self.tireRRRect)
+        self.tireRRText.draw(screen)
+
+    def update(self, dt, events):
+        self.tireFLText.update()
+        self.tireFRText.update()
+        self.tireRLText.update()
+        self.tireRRText.update()
+        pass
 
 class Text:
     def __init__(self,textFunc,font,position,color=variables.WHITE,align="Center"):

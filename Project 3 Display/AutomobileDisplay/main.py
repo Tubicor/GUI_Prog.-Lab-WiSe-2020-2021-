@@ -1,6 +1,7 @@
 import threading
 import ControlWindow
 import Display
+import pygame
 
 class myThread(threading.Thread):
     def __init__(self, method, info):
@@ -17,6 +18,8 @@ def main():
    thread1 = myThread(ControlWindow.controlWindow,"Control-Window for Properties of the Car")
    thread2 = myThread(Display.display,"Display of Driver")
    #Start Threads
+   
+   pygame.font.init()
    thread1.start()
    thread2.start()
 

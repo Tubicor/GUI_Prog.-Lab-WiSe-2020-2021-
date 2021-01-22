@@ -77,7 +77,7 @@ class DriveScene():
     def __init__(self):
         self.tX = 0
         self.tY = 0
-        self.background = pygame.image.load("Assets\Background_Neu.png")
+        self.background = pygame.image.load("Assets\Background_Neu_Black.png")
         self.textSmallFont = pygame.freetype.SysFont(variables.FONTSMALL[0],variables.FONTSMALL[1])
         self.textMediumFont = pygame.freetype.SysFont(variables.FONTMEDIUM[0],variables.FONTMEDIUM[1])
         self.gear = variables.gear
@@ -116,8 +116,8 @@ class DriveScene():
              self.sPointer.angle = 4 + 97.5 + 360*45/80*((variables.speed-60)/variables.MAXSPEED)
         self.rPointer.angle = 3 + 360*6/10*(variables.rpm/variables.MAXRPM)
         self.fMeter.angle = 112 - 64*(variables.fuel/variables.MAXFUEL);
-        if(variables.temp > variables.MINTEMP +2):
-            self.tempMeter.angle = 113 - 65*((variables.temp-variables.MINTEMP)/(variables.MAXTEMP-variables.MINTEMP))
+        if(variables.engineTemperature > variables.MINTEMP +2):
+            self.tempMeter.angle = 113 - 65*((variables.engineTemperature-variables.MINTEMP)/(variables.MAXTEMP-variables.MINTEMP))
         else:
             self.tempMeter.angle = 111
         self.gear = variables.gear

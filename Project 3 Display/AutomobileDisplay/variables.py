@@ -4,7 +4,7 @@ import pygame.freetype
 MAXSPEED = 250
 MAXRPM = 5300
 IDLERPM = 300
-MAXFUEL = 100
+MAXFUEL = 60
 MAXTEMP = 130
 MINTEMP = 50
 AVAILABLEMODES =[
@@ -16,10 +16,6 @@ BUTTONDOWN = pygame.USEREVENT+3
 BUTTONLEFT = pygame.USEREVENT+4
 BUTTONMIDDLE = pygame.USEREVENT+5
 SECOUND = pygame.USEREVENT+100
-pygame.font.init()
-SMALLFONT = pygame.font.SysFont("Arial",30) 
-MEDIUMFONT = pygame.font.SysFont("Arial",50)
-BIGFONT = pygame.font.SysFont("Arial",75)
 #https://stackoverflow.com/questions/20842801/how-to-display-text-in-pygame
 FONTBIG = ('Arial',120)
 FONTMEDIUM = ('Arial',60)
@@ -34,10 +30,14 @@ speed = 0
 rpm = 0
 gear = "N"
 fuel = 0
-temp = 50
+engineTemperature = 50
+outsideTemperature = 10
+carTemperature = 25
+battery = 14.5
 trip = 0
 totalKM = 66600
 lights = [False,False]  #[Front,Rear]
 turnLights = "out"      #possible = out, left, right, bothBlinking
 doors = [False,False,False]#False = door shut | [Driver Door, Co-Driver Door, Tailgate]
 mode = AVAILABLEMODES[0]
+tirePressure = [2.5,2.5,2.8,2.8] # LeftFront - RightFront LeftRear RightRear
