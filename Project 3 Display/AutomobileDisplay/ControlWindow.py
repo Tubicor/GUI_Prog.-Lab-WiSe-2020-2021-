@@ -44,7 +44,7 @@ class Controller():
         self.sliderFrame.columnconfigure(0,minsize=200)
         self.sliderFrame.columnconfigure(1,minsize=100)
         self.sliderFrame.columnconfigure(2,minsize=200)
-        self.sliderFrame.grid(columnspan=2,row=1)
+        self.sliderFrame.grid(row=0,column=3)
         self.speedLabel = tk.Label(master=self.sliderFrame,text="Speed : 0",font=("Arial", 16))
         self.speedLabel.grid(row=0)
         self.speedSlider = tk.Scale(master=self.sliderFrame,length = 300,variable = self.speedVar, from_=0,showvalue =0,to=variables.MAXSPEED,resolution =0.1,orient=tk.VERTICAL,command=self.calcRPMandGear)

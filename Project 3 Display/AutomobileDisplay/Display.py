@@ -195,10 +195,11 @@ def display():
     dt = 0
     pygame.init()
     fader = Fader([DriveScene()])
+    running = True
 
     #Timer for calculating Trip in variables
     pygame.time.set_timer(variables.SECOUND,1000)
-    while True:
+    while running:
         dt = clock.tick(60)
         screen.fill((0,0,0))
         events = pygame.event.get()
