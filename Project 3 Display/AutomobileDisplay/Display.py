@@ -91,6 +91,11 @@ class DriveScene():
         #Fuel Meter
         self.fMeter  =RotatingImage(21,300,0,235,35,pygame.image.load("Assets\MeterFuel.png"))
         self.tempMeter  =RotatingImage(901,300,0,235,35,pygame.image.load("Assets\MeterFuel.png"))
+
+        #Fuel Display
+        self.textFuel = " "
+        self.textFuelRect = self.textSmallFont.get_rect(self.textFuel)
+        self.textFuelRect.center = (0,0)
         
         self.mmMonitor = MultiMediaMonitor(555,40,270,450,20)
         #icons
@@ -159,6 +164,8 @@ class DriveScene():
             screen.blit(self.iconOil,self.iconsPlaceRight[4])
         if(variables.trunk):
             screen.blit(self.iconTrunk,self.iconsPlaceRight[5])
+        #Fuel Display
+        self.textSmallFont.render_to(screen,self.textFuelRect,self.textFuel,variables.WHITE)
 
     def update(self, dt, events):        
         self.sPointer.angle = 4 + 360*45/40*(variables.speed/variables.MAXSPEED)
@@ -172,6 +179,11 @@ class DriveScene():
             self.tempMeter.angle = 111
         self.gear = variables.gear
         self.mmMonitor.update(dt,events)
+
+        #Fuel Display
+        self.textFuel = str(int(variables.fuel*100/(8.5+variables.AVAILABLEMODES.index(variables.mode)*0.9)))
+        self.textFuelRect = self.textSmallFont.get_rect(self.textFuel)
+        self.textFuelRect.midright = (288,429)
 
 class MultimediaScene:
     def __init__(self):       
