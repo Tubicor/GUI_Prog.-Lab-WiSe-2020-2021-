@@ -359,7 +359,7 @@ class SpeedMonitor(Monitor):
 class NavigationMonitor(Monitor):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.navImage = pygame.image.load("Assets\\Navigation.png")
+        self.navImage = pygame.image.load("Assets\\navigation.png")
         self.navImageRect = self.navImage.get_rect()
         self.navImageRect.center = (self._center[0],self._center[1]+10)
     def draw(self, screen):
